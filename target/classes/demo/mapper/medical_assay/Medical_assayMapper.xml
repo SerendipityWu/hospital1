@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="demo.mapper.medical_assay.Medical_assayMapper">
+    <select id="findAll" resultType="demo.pojo.Medical_assay">
+        SELECT medical_assay.*,hospital.`name` as hospitalName FROM medical_assay INNER JOIN hospital on hospital.id=medical_assay.hospital_id
+        <where>
+            <if test="hospital_id!=0">
+                and hospital_id=#{hospital_id}
+            </if>
+        </where>
+    </select>
+    <delete id="del">
+        delete from medical_assay where id=#{id}
+    </delete>
+    <update id="update">
+        update medical_assay set assay_result=1 where id=#{id}
+    </update>
+    <insert id="save">
+        insert into assay_result(assay_user,hospital_id,assay_result,phone,card_num,assay_time)
+        values (#{assay_user},#{hospital_id},#{assay_result},#{phone},#{card_num},#{assay_time})
+    </insert>
+</mapper>

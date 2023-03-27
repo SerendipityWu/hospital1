@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script src="webjars/jquery/3.4.1/jquery.js"></script>
+<body>
+<form action="/list" method="post">
+    <select name="id">
+
+    </select>
+    <input type="submit" value="查询">
+</form>
+<input type="hidden" name="ids" th:value="${ids}">
+<table border="1">
+    <tr>
+        <td>被检测人</td>
+        <td>被检测人手机号</td>
+        <td>被检测人身份证</td>
+        <td>检测机构</td>
+        <td>检测日期</td>
+        <td>检查结果</td>
+        <td>操作</td>
+    </tr>
+    <tr th:each="er:${list}">
+        <td th:text="${er.assay_user}"></td>
+        <td th:text="${er.phone}"></td>
+        <td th:text="${er.card_num}"></td>
+        <td th:text="${er.hospitalName}"></td>
+        <td th:text="${#dates.format(er.assay_time,'yyyy-MM-dd')}"></td>
+        <td th:if="${er.assay_result==1}" style="color: red">确诊</td>
+        <td th:class="ff" th:if="${er.assay_result==0}">检查中</td>
+<!--        <button th:onclick="up([[${er.id}]],this)">确诊</button></td>-->
+    </tr>
+</table>
+<script>
+  $.getJSON("/all",function (data) {
+      var aa="<option value='0'>请选择</option>";
+      var ids=$("[name=ids]").val();
+      for (var i=0;i<data.length;i++){
+          if (data[i].id==ids){
+              aa+="<option value='"+data[i].id+"' selected>"+data[i].name+"</option>";
+          }else{
+              aa+="<option value='"+data[i].id+"'>"+data[i].name+"</option>";
+          }
+      }
+      $("[name=id]").html(aa);
+  })
+    function up(id,a) {
+      if (confirm("确定确诊吗")){
+          $.post("/update/"+id,function (data) {
+              if (data==true){
+                  $(a).parents("td").prev().html("确诊").css("color","red");
+              }
+          })
+          alert("确诊成功");
+      }else{
+          alert("取消成功");
+      }
+    }
+</script>
+</body>
+</html>
